@@ -1,29 +1,17 @@
-# github.com/fsnotify/fsnotify v1.4.9
-## explicit
 # github.com/gobuffalo/flect v0.2.2
 ## explicit
 github.com/gobuffalo/flect
-# github.com/golang/protobuf v1.4.3 => github.com/golang/protobuf v1.4.3
-## explicit
-# github.com/google/go-cmp v0.5.4
-## explicit
 # github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88
-## explicit
-# github.com/kr/text v0.2.0
 ## explicit
 # github.com/mattn/go-colorable v0.1.8
 ## explicit
-# github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e
+# github.com/onsi/ginkgo v1.16.1
 ## explicit
-# github.com/onsi/ginkgo v1.11.0
+# github.com/onsi/gomega v1.11.0
 ## explicit
-# github.com/onsi/gomega v1.8.1
-## explicit
-# github.com/sergi/go-diff v1.1.0
+# github.com/sergi/go-diff v1.2.0
 ## explicit
 github.com/sergi/go-diff/diffmatchpatch
-# github.com/stretchr/testify v1.6.1
-## explicit
 # github.com/yudai/gojsondiff v1.0.0
 ## explicit
 github.com/yudai/gojsondiff
@@ -33,20 +21,7 @@ github.com/yudai/gojsondiff/formatter
 github.com/yudai/golcs
 # github.com/yudai/pp v2.0.1+incompatible
 ## explicit
-# golang.org/x/net v0.0.0-20210224082022-3d97a244fca7
-## explicit
-# golang.org/x/sys v0.0.0-20210309074719-68d13333faf2
-## explicit
-# golang.org/x/text v0.3.4
-## explicit
-# golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
-## explicit
-# google.golang.org/protobuf v1.25.0
-## explicit
-# gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f
-## explicit
 # gopkg.in/yaml.v2 v2.4.0
-## explicit
 gopkg.in/yaml.v2
 # sigs.k8s.io/yaml v1.2.0
 ## explicit
