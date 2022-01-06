@@ -18,9 +18,7 @@ package schemachecker
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -132,35 +130,34 @@ func (checker *SchemaChecker) Test(t *testing.T, schemaKind string, file string)
 func (checker *SchemaChecker) Check(schemaKind string, file string) (string, error) {
 	data, err := fs.ReadFile(checker.fsys, file)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, file)
 	}
 
 	var original map[string]interface{}
 	err = yaml.Unmarshal(data, &original)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, file)
 	}
 	sorted, err := json.Marshal(&original)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, file)
 	}
 
 	spec := checker.makeInstance(schemaKind)
 	err = yaml.Unmarshal(data, &spec)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, file)
 	}
 	parsed, err := json.Marshal(spec)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, file)
 	}
 
 	// Then, Check them
 	differ := diff.New()
 	d, err := differ.Compare(sorted, parsed)
 	if err != nil {
-		fmt.Printf("Failed to unmarshal file: %s\n", err.Error())
-		os.Exit(3)
+		return "", errors.Wrap(err, file)
 	}
 
 	if d.Modified() {
@@ -172,7 +169,7 @@ func (checker *SchemaChecker) Check(schemaKind string, file string) (string, err
 		f := formatter.NewAsciiFormatter(original, config)
 		result, err := f.Format(d)
 		if err != nil {
-			return "", err
+			return "", errors.Wrap(err, file)
 		}
 		return result, nil
 	}
@@ -209,10 +206,11 @@ func (checker *SchemaChecker) test(t *testing.T, diff string, err error) {
 }
 
 func CheckFS(fsys fs.FS, v interface{}) error {
-	return fs.WalkDir(fsys, ".", func(path string, _ fs.DirEntry, err error) error {
-		if err != nil {
+	return fs.WalkDir(fsys, ".", func(path string, e fs.DirEntry, err error) error {
+		if e.IsDir() || err != nil {
 			return err
 		}
+
 		checker := New(fsys)
 		d, err := checker.CheckObject(v, path)
 		if err != nil {
