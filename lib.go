@@ -114,10 +114,12 @@ func (checker *SchemaChecker) TestKind(t *testing.T, kind string) {
 }
 
 func (checker *SchemaChecker) CheckObject(v interface{}, file string) (string, error) {
+	checker.registry[kind(v)] = reflect.TypeOf(v)
 	return checker.Check(kind(v), file)
 }
 
 func (checker *SchemaChecker) TestObject(t *testing.T, v interface{}, file string) {
+	checker.registry[kind(v)] = reflect.TypeOf(v)
 	checker.Test(t, kind(v), file)
 }
 
