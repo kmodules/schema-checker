@@ -19,7 +19,7 @@ package schemachecker
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -62,7 +62,7 @@ func (d DefaultTypeMapper) ToChartName(k string) string {
 
 type SchemaChecker struct {
 	// project root directory
-	rootDir  string
+	fsys     fs.FS
 	mapper   TypeMapper
 	registry map[string]reflect.Type
 }
@@ -79,13 +79,13 @@ func (checker *SchemaChecker) makeInstance(name string) interface{} {
 
 // https://stackoverflow.com/a/23031445
 
-func New(rootDir string, objs []interface{}) *SchemaChecker {
+func New(fsys fs.FS, objs ...interface{}) *SchemaChecker {
 	reg := map[string]reflect.Type{}
 	for _, v := range objs {
 		reg[kind(v)] = reflect.TypeOf(v)
 	}
 	return &SchemaChecker{
-		rootDir:  rootDir,
+		fsys:     fsys,
 		mapper:   DefaultTypeMapper{},
 		registry: reg,
 	}
@@ -93,7 +93,7 @@ func New(rootDir string, objs []interface{}) *SchemaChecker {
 
 func (checker *SchemaChecker) CheckChart(chartName string) (string, error) {
 	schemaKind := checker.mapper.ChartNameToSchemaKind(chartName)
-	file := filepath.Join(checker.rootDir, "charts", chartName, "values.yaml")
+	file := filepath.Join("charts", chartName, "values.yaml")
 	return checker.Check(schemaKind, file)
 }
 
@@ -104,7 +104,7 @@ func (checker *SchemaChecker) TestChart(t *testing.T, chartName string) {
 
 func (checker *SchemaChecker) CheckKind(kind string) (string, error) {
 	schemaKind := checker.mapper.KindToSchemaKind(kind)
-	file := filepath.Join(checker.rootDir, "charts", checker.mapper.ToChartName(kind), "values.yaml")
+	file := filepath.Join("charts", checker.mapper.ToChartName(kind), "values.yaml")
 	return checker.Check(schemaKind, file)
 }
 
@@ -129,7 +129,7 @@ func (checker *SchemaChecker) Test(t *testing.T, schemaKind string, file string)
 }
 
 func (checker *SchemaChecker) Check(schemaKind string, file string) (string, error) {
-	data, err := ioutil.ReadFile(file)
+	data, err := fs.ReadFile(checker.fsys, file)
 	if err != nil {
 		return "", err
 	}
