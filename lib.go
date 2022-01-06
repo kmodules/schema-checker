@@ -93,8 +93,8 @@ func New(rootDir string, objs []interface{}) *SchemaChecker {
 
 func (checker *SchemaChecker) CheckChart(chartName string) (string, error) {
 	schemaKind := checker.mapper.ChartNameToSchemaKind(chartName)
-	valuesfile := filepath.Join(checker.rootDir, "charts", chartName, "values.yaml")
-	return checker.Check(schemaKind, valuesfile)
+	file := filepath.Join(checker.rootDir, "charts", chartName, "values.yaml")
+	return checker.Check(schemaKind, file)
 }
 
 func (checker *SchemaChecker) TestChart(t *testing.T, chartName string) {
@@ -104,8 +104,8 @@ func (checker *SchemaChecker) TestChart(t *testing.T, chartName string) {
 
 func (checker *SchemaChecker) CheckKind(kind string) (string, error) {
 	schemaKind := checker.mapper.KindToSchemaKind(kind)
-	valuesfile := filepath.Join(checker.rootDir, "charts", checker.mapper.ToChartName(kind), "values.yaml")
-	return checker.Check(schemaKind, valuesfile)
+	file := filepath.Join(checker.rootDir, "charts", checker.mapper.ToChartName(kind), "values.yaml")
+	return checker.Check(schemaKind, file)
 }
 
 func (checker *SchemaChecker) TestKind(t *testing.T, kind string) {
@@ -113,13 +113,21 @@ func (checker *SchemaChecker) TestKind(t *testing.T, kind string) {
 	checker.test(t, result, err)
 }
 
-func (checker *SchemaChecker) Test(t *testing.T, schemaKind string, valuesfile string) {
-	result, err := checker.Check(schemaKind, valuesfile)
+func (checker *SchemaChecker) CheckObject(v interface{}, file string) (string, error) {
+	return checker.Check(kind(v), file)
+}
+
+func (checker *SchemaChecker) TestObject(t *testing.T, v interface{}, file string) {
+	checker.Test(t, kind(v), file)
+}
+
+func (checker *SchemaChecker) Test(t *testing.T, schemaKind string, file string) {
+	result, err := checker.Check(schemaKind, file)
 	checker.test(t, result, err)
 }
 
-func (checker *SchemaChecker) Check(schemaKind string, valuesfile string) (string, error) {
-	data, err := ioutil.ReadFile(valuesfile)
+func (checker *SchemaChecker) Check(schemaKind string, file string) (string, error) {
+	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return "", err
 	}
