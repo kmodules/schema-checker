@@ -27,6 +27,7 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/flect"
+	"github.com/pkg/errors"
 	diff "github.com/yudai/gojsondiff"
 	"github.com/yudai/gojsondiff/formatter"
 	"sigs.k8s.io/yaml"
@@ -204,5 +205,28 @@ func (checker *SchemaChecker) test(t *testing.T, diff string, err error) {
 	}
 	if diff != "" {
 		t.Errorf("values file does not match, diff: %s", diff)
+	}
+}
+
+func CheckFS(fsys fs.FS, v interface{}) error {
+	return fs.WalkDir(fsys, ".", func(path string, _ fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		checker := New(fsys)
+		d, err := checker.CheckObject(v, path)
+		if err != nil {
+			return errors.Wrap(err, path)
+		}
+		if d != "" {
+			return errors.Wrapf(err, "values file does not match, diff: %s", d)
+		}
+		return nil
+	})
+}
+
+func TestFS(t *testing.T, fsys fs.FS, v interface{}) {
+	if err := CheckFS(fsys, v); err != nil {
+		t.Error(err)
 	}
 }
