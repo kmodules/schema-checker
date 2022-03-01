@@ -38,8 +38,7 @@ type TypeMapper interface {
 	ToChartName(k string) string
 }
 
-type DefaultTypeMapper struct {
-}
+type DefaultTypeMapper struct{}
 
 var _ TypeMapper = &DefaultTypeMapper{}
 
