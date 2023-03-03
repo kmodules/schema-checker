@@ -24,6 +24,10 @@ github.com/yudai/gojsondiff/formatter
 github.com/yudai/golcs
 # github.com/yudai/pp v2.0.1+incompatible
 ## explicit
+# golang.org/x/net v0.7.0
+## explicit; go 1.17
+# golang.org/x/sys v0.5.0
+## explicit; go 1.17
 # gopkg.in/yaml.v2 v2.4.0
 ## explicit; go 1.15
 gopkg.in/yaml.v2
